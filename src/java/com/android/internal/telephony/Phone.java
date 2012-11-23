@@ -2119,12 +2119,9 @@ public interface Phone {
      * Set boolean broadcastEmergencyCallStateChanges
      */
     public void setBroadcastEmergencyCallStateChanges(boolean broadcast);
-<<<<<<< HEAD
-=======
 
     /** Request to update the current local call hold state.
      * @param lchStatus, true if call is in lch state
      */
     public void setLocalCallHold(boolean lchStatus);
->>>>>>> 3cc94cf... MSIM: Add support for DSDA
 }
