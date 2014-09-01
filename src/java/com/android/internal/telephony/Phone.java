@@ -2114,4 +2114,9 @@ public interface Phone {
      * Returns the modem activity information
      */
     public void getModemActivityInfo(Message response);
+
+    /** Request to update the current local call hold state.
+     * @param lchStatus, true if call is in lch state
+     */
+    public void setLocalCallHold(boolean lchStatus);
 }
