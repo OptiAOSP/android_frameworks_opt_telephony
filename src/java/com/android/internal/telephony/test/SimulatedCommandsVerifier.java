@@ -1389,6 +1389,11 @@ public class SimulatedCommandsVerifier implements CommandsInterface {
     }
 
     @Override
+    public void unSetOnCatSendSmsResult(Handler h) { // Samsung STK
+
+    }
+
+    @Override
     public void updateAdnRecord(SimPhoneBookAdnRecord adnRecordInfo, Message result){
 
     }
@@ -1408,6 +1413,10 @@ public class SimulatedCommandsVerifier implements CommandsInterface {
     }
 
     public void unregisterForAdnRecordsInfo(Handler h){
+
+    }
+
+    public void setOnCatSendSmsResult(Handler h, int what, Object obj) { // Samsung STK
 
     }
 
