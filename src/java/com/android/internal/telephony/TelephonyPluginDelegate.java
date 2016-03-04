@@ -109,9 +109,4 @@ public class TelephonyPluginDelegate {
             CommandsInterface[] commandsInterfaces) {
         sPlugin.initSubscriptionController(context, commandsInterfaces);
     }
-
-    public SubscriptionInfoUpdater makeSubscriptionInfoUpdater(Context context,
-            Phone[] phoneProxy, CommandsInterface[] commandsInterfaces) {
-        return sPlugin.makeSubscriptionInfoUpdater(context, phoneProxy, commandsInterfaces);
-    }
 }

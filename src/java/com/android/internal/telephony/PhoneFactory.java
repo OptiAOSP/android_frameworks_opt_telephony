@@ -206,8 +206,8 @@ public class PhoneFactory {
                 sMadeDefaults = true;
 
                 Rlog.i(LOG_TAG, "Creating SubInfoRecordUpdater ");
-                sSubInfoRecordUpdater = TelephonyPluginDelegate.getInstance().
-                        makeSubscriptionInfoUpdater(context, sProxyPhones, sCommandsInterfaces);
+                sSubInfoRecordUpdater = new SubscriptionInfoUpdater(context,
+                        sProxyPhones, sCommandsInterfaces);
                 SubscriptionController.getInstance().updatePhonesAvailability(sProxyPhones);
 
                 // Start monitoring after defaults have been made.
