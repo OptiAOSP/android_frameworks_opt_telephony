@@ -1063,12 +1063,7 @@ public abstract class PhoneBase extends Handler implements Phone {
         nsm.operatorAlphaShort = network.getOperatorAlphaShort();
 
         Message msg = obtainMessage(EVENT_SET_NETWORK_MANUAL_COMPLETE, nsm);
-        if (network.getRadioTech().equals("")) {
-            mCi.setNetworkSelectionModeManual(network.getOperatorNumeric(), msg);
-        } else {
-            mCi.setNetworkSelectionModeManual(network.getOperatorNumeric()
-                    + "+" + network.getRadioTech(), msg);
-        }
+        mCi.setNetworkSelectionModeManual(network.getOperatorNumeric(), msg);
 
         if (persistSelection) {
             updateSavedNetworkOperator(nsm);
