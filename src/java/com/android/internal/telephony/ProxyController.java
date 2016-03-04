@@ -133,8 +133,7 @@ public class ProxyController {
         mUiccController = uiccController;
         mCi = ci;
 
-        mDctController = TelephonyPluginDelegate.getInstance()
-            .makeDctController((PhoneProxy[])phoneProxy);
+        mDctController = DctController.makeDctController(phoneProxy);
         mUiccPhoneBookController = new UiccPhoneBookController(mProxyPhones);
         mPhoneSubInfoController = new PhoneSubInfoController(mProxyPhones);
         mUiccSmsController = new UiccSmsController(mProxyPhones);
