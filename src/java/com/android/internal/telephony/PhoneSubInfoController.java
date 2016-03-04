@@ -29,7 +29,6 @@ import java.lang.NullPointerException;
 public class PhoneSubInfoController extends IPhoneSubInfo.Stub {
     private static final String TAG = "PhoneSubInfoController";
     private Phone[] mPhone;
-    private static final int PHONE_ID_1 = 0;
 
     public PhoneSubInfoController(Phone[] phone) {
         mPhone = phone;
@@ -38,10 +37,8 @@ public class PhoneSubInfoController extends IPhoneSubInfo.Stub {
         }
     }
 
-    // The device id should be constant for non-msim applications
-    // so always return device id from first phone.
     public String getDeviceId(String callingPackage) {
-        return getDeviceIdForPhone(PHONE_ID_1);
+        return getDeviceIdForPhone(SubscriptionManager.getPhoneId(getDefaultSubscription()));
     }
 
     public String getDeviceIdForPhone(int phoneId) {
@@ -76,11 +73,8 @@ public class PhoneSubInfoController extends IPhoneSubInfo.Stub {
         }
     }
 
-    // The device svn should be constant for non-msim applications
-    // so always return device svn from first phone.
     public String getDeviceSvn(String callingPackage) {
-        int[] subId = SubscriptionController.getInstance().getSubId(PHONE_ID_1);
-        return getDeviceSvnUsingSubId(subId[0], callingPackage);
+        return getDeviceSvnUsingSubId(getDefaultSubscription(), callingPackage);
     }
 
     public String getDeviceSvnUsingSubId(int subId, String callingPackage) {
