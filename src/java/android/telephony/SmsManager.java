@@ -340,6 +340,7 @@ public final class SmsManager {
     public void sendTextMessageWithSelfPermissions(
             String destinationAddress, String scAddress, String text,
             PendingIntent sentIntent, PendingIntent deliveryIntent) {
+        android.util.SeempLog.record_str(75, destinationAddress);
         if (TextUtils.isEmpty(destinationAddress)) {
             throw new IllegalArgumentException("Invalid destinationAddress");
         }
@@ -734,6 +735,7 @@ public final class SmsManager {
     public void sendDataMessageWithSelfPermissions(
             String destinationAddress, String scAddress, short destinationPort,
             byte[] data, PendingIntent sentIntent, PendingIntent deliveryIntent) {
+        android.util.SeempLog.record_str(73, destinationAddress);
         if (TextUtils.isEmpty(destinationAddress)) {
             throw new IllegalArgumentException("Invalid destinationAddress");
         }
