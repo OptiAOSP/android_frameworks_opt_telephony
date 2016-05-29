@@ -669,8 +669,6 @@ public class GsmServiceStateTracker extends ServiceStateTracker {
         if (subIds != null && subIds.length > 0) {
             subId = subIds[0];
         }
-        spn = maybeUpdateHDTagForSpn(showSpn, spn);
-        plmn = maybeUpdateHDTagForPlmn(showPlmn, plmn);
 
         if (mConfigResUtil.getBooleanValue(mPhone.getContext(), "config_spn_display_control")) {
             // Control not to show SPN.
