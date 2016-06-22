@@ -54,8 +54,8 @@ import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.Display;
 
-import com.android.internal.telephony.TelephonyProto.SmsSession;
-import com.android.internal.telephony.TelephonyProto.TelephonySettings;
+import com.android.internal.telephony.nano.TelephonyProto.SmsSession;
+import com.android.internal.telephony.nano.TelephonyProto.TelephonySettings;
 import com.android.internal.telephony.cdma.CdmaCallWaitingNotification;
 import com.android.internal.telephony.cdma.CdmaInformationRecords;
 import com.android.internal.telephony.cdma.CdmaSmsBroadcastConfigInfo;

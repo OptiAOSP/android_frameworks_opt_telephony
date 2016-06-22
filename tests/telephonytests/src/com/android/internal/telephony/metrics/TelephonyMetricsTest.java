@@ -27,18 +27,18 @@ import com.android.internal.telephony.Call;
 import com.android.internal.telephony.GsmCdmaConnection;
 import com.android.internal.telephony.PhoneConstants;
 import com.android.internal.telephony.SmsResponse;
-import com.android.internal.telephony.TelephonyProto;
-import com.android.internal.telephony.TelephonyProto.ImsConnectionState;
-import com.android.internal.telephony.TelephonyProto.SmsSession;
-import com.android.internal.telephony.TelephonyProto.RadioAccessTechnology;
-import com.android.internal.telephony.TelephonyProto.TelephonyCallSession;
-import com.android.internal.telephony.TelephonyProto.TelephonyCallSession.Event.CallState;
-import com.android.internal.telephony.TelephonyProto.TelephonyCallSession.Event.ImsCommand;
-import com.android.internal.telephony.TelephonyProto.TelephonyCallSession.Event.RilCall;
-import com.android.internal.telephony.TelephonyProto.TelephonyEvent;
-import com.android.internal.telephony.TelephonyProto.TelephonyLog;
-import com.android.internal.telephony.TelephonyProto.TelephonyServiceState;
-import com.android.internal.telephony.TelephonyProto.TelephonyServiceState.RoamingType;
+import com.android.internal.telephony.nano.TelephonyProto;
+import com.android.internal.telephony.nano.TelephonyProto.ImsConnectionState;
+import com.android.internal.telephony.nano.TelephonyProto.SmsSession;
+import com.android.internal.telephony.nano.TelephonyProto.RadioAccessTechnology;
+import com.android.internal.telephony.nano.TelephonyProto.TelephonyCallSession;
+import com.android.internal.telephony.nano.TelephonyProto.TelephonyCallSession.Event.CallState;
+import com.android.internal.telephony.nano.TelephonyProto.TelephonyCallSession.Event.ImsCommand;
+import com.android.internal.telephony.nano.TelephonyProto.TelephonyCallSession.Event.RilCall;
+import com.android.internal.telephony.nano.TelephonyProto.TelephonyEvent;
+import com.android.internal.telephony.nano.TelephonyProto.TelephonyLog;
+import com.android.internal.telephony.nano.TelephonyProto.TelephonyServiceState;
+import com.android.internal.telephony.nano.TelephonyProto.TelephonyServiceState.RoamingType;
 import com.android.internal.telephony.TelephonyTest;
 import com.android.internal.telephony.UUSInfo;
 import com.android.internal.telephony.dataconnection.DataCallResponse;
@@ -621,4 +621,45 @@ public class TelephonyMetricsTest extends TelephonyTest {
         byte[] decodedString = Base64.decode(encodedString, Base64.DEFAULT);
         assertArrayEquals(TelephonyProto.TelephonyLog.toByteArray(log), decodedString);
     }
+<<<<<<< HEAD
+=======
+
+    // Test write ims capabilities changed
+    @Test
+    @SmallTest
+    public void testWriteOnImsCapabilities() throws Exception {
+        boolean[] caps1 = new boolean[]{true, false, true, false, true, false};
+        mMetrics.writeOnImsCapabilities(mPhone.getPhoneId(), caps1);
+        boolean[] caps2 = new boolean[]{true, false, true, false, true, false};
+        // The duplicate one should be filtered out.
+        mMetrics.writeOnImsCapabilities(mPhone.getPhoneId(), caps2);
+        boolean[] caps3 = new boolean[]{false, true, false, true, false, true};
+        mMetrics.writeOnImsCapabilities(mPhone.getPhoneId(), caps3);
+        TelephonyLog log = buildProto();
+
+        assertEquals(2, log.events.length);
+        assertEquals(0, log.callSessions.length);
+        assertEquals(0, log.smsSessions.length);
+
+        TelephonyEvent event = log.events[0];
+
+        assertEquals(TelephonyEvent.Type.IMS_CAPABILITIES_CHANGED, event.type);
+        assertEquals(caps1[0], event.imsCapabilities.voiceOverLte);
+        assertEquals(caps1[1], event.imsCapabilities.videoOverLte);
+        assertEquals(caps1[2], event.imsCapabilities.voiceOverWifi);
+        assertEquals(caps1[3], event.imsCapabilities.videoOverWifi);
+        assertEquals(caps1[4], event.imsCapabilities.utOverLte);
+        assertEquals(caps1[5], event.imsCapabilities.utOverWifi);
+
+        event = log.events[1];
+
+        assertEquals(TelephonyEvent.Type.IMS_CAPABILITIES_CHANGED, event.type);
+        assertEquals(caps3[0], event.imsCapabilities.voiceOverLte);
+        assertEquals(caps3[1], event.imsCapabilities.videoOverLte);
+        assertEquals(caps3[2], event.imsCapabilities.voiceOverWifi);
+        assertEquals(caps3[3], event.imsCapabilities.videoOverWifi);
+        assertEquals(caps3[4], event.imsCapabilities.utOverLte);
+        assertEquals(caps3[5], event.imsCapabilities.utOverWifi);
+    }
+>>>>>>> 9460a22... Update package names to work with the proto3 compiler
 }
