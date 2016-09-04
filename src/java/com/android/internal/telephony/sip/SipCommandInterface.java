@@ -627,5 +627,4 @@ class SipCommandInterface extends BaseCommands implements CommandsInterface {
     public void getModemActivityInfo(Message result) {
     }
 
-    public boolean needsOldRilFeature(String feature) { return false; }
 }
