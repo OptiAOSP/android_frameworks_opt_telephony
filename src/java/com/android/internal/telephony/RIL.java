@@ -3981,10 +3981,15 @@ public class RIL extends BaseCommands implements CommandsInterface {
             dataCall.cid = p.readInt();
             dataCall.active = p.readInt();
             dataCall.type = p.readString();
+            if (version < 4) p.readString(); // APN not used
             String addresses = p.readString();
             if (!TextUtils.isEmpty(addresses)) {
                 dataCall.addresses = addresses.split(" ");
             }
+            // DataCallState needs an ifname. Since we don't have one,
+            // use the name from the ThrottleService resource. (default = rmnet0)
+            dataCall.ifname = Resources.getSystem().getString(
+                    com.android.internal.R.string.config_datause_iface);
         } else {
             dataCall.status = p.readInt();
             dataCall.suggestedRetryTime = p.readInt();
@@ -4764,7 +4769,7 @@ public class RIL extends BaseCommands implements CommandsInterface {
         riljLogv("[UNSL]< " + responseToString(response) + " " + retToString(response, ret));
     }
 
-    private Object
+    protected Object
     responseSsData(Parcel p) {
         int num;
         SsData ssData = new SsData();
@@ -5130,19 +5135,17 @@ public class RIL extends BaseCommands implements CommandsInterface {
      */
     @Override
     public void iccOpenLogicalChannel(String AID, Message response) {
+        if (mRilVersion < 10) {
+            if (response != null) {
+                CommandException ex = new CommandException(
+                        CommandException.Error.REQUEST_NOT_SUPPORTED);
+                AsyncResult.forMessage(response, null, ex);
+                response.sendToTarget();
+            }
+            return;
+        }
+
         RILRequest rr = RILRequest.obtain(RIL_REQUEST_SIM_OPEN_CHANNEL, response);
-        rr.mParcel.writeString(AID);
-
-        if (RILJ_LOGD)
-            riljLog(rr.serialString() + "> " + requestToString(rr.mRequest));
-
-        send(rr);
-    }
-
-    @Override
-    public void iccOpenLogicalChannel(String AID, byte p2, Message response) {
-        RILRequest rr = RILRequest.obtain(RIL_REQUEST_CAF_SIM_OPEN_CHANNEL_WITH_P2, response);
-        rr.mParcel.writeByte(p2);
         rr.mParcel.writeString(AID);
 
         if (RILJ_LOGD)
@@ -5170,8 +5173,34 @@ public class RIL extends BaseCommands implements CommandsInterface {
      * {@inheritDoc}
      */
     @Override
+    public void getAtr(Message response) {
+        RILRequest rr = RILRequest.obtain(RIL_REQUEST_SIM_GET_ATR, response);
+        int slotId = 0;
+        rr.mParcel.writeInt(1);
+        rr.mParcel.writeInt(slotId);
+        if (RILJ_LOGD) riljLog(rr.serialString() + "> iccGetAtr: "
+                + requestToString(rr.mRequest) + " " + slotId);
+
+        send(rr);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void iccTransmitApduLogicalChannel(int channel, int cla, int instruction,
             int p1, int p2, int p3, String data, Message response) {
+        if (mRilVersion < 10) {
+            if (response != null) {
+                CommandException ex = new CommandException(
+                        CommandException.Error.REQUEST_NOT_SUPPORTED);
+                AsyncResult.forMessage(response, null, ex);
+                response.sendToTarget();
+            }
+            return;
+        }
+
         if (channel <= 0) {
             throw new RuntimeException(
                 "Invalid channel in iccTransmitApduLogicalChannel: " + channel);
@@ -5191,26 +5220,21 @@ public class RIL extends BaseCommands implements CommandsInterface {
                 p1, p2, p3, data, response);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void getAtr(Message response) {
-        RILRequest rr = RILRequest.obtain(RIL_REQUEST_SIM_GET_ATR, response);
-        int slotId = 0;
-        rr.mParcel.writeInt(1);
-        rr.mParcel.writeInt(slotId);
-        if (RILJ_LOGD) riljLog(rr.serialString() + "> iccGetAtr: "
-                + requestToString(rr.mRequest) + " " + slotId);
-
-        send(rr);
-    }
-
     /*
      * Helper function for the iccTransmitApdu* commands above.
      */
     private void iccTransmitApduHelper(int rilCommand, int channel, int cla,
             int instruction, int p1, int p2, int p3, String data, Message response) {
+        if (mRilVersion < 10) {
+            if (response != null) {
+                CommandException ex = new CommandException(
+                        CommandException.Error.REQUEST_NOT_SUPPORTED);
+                AsyncResult.forMessage(response, null, ex);
+                response.sendToTarget();
+            }
+            return;
+        }
+
         RILRequest rr = RILRequest.obtain(rilCommand, response);
         rr.mParcel.writeInt(channel);
         rr.mParcel.writeInt(cla);
