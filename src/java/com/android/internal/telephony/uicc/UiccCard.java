@@ -193,19 +193,6 @@ public class UiccCard {
                 }
             }
 
-            if (needsSimActivation()) {
-                if (mCardState == CardState.CARDSTATE_PRESENT) {
-                    if (!mDefaultAppsActivated) {
-                        activateDefaultApps();
-                        mDefaultAppsActivated = true;
-                    }
-                } else {
-                    // SIM removed, reset activation flag to make sure
-                    // to re-run the activation at the next insertion
-                    mDefaultAppsActivated = false;
-                }
-            }
-
             mLastRadioState = radioState;
         }
     }
