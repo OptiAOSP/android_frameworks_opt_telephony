@@ -300,6 +300,7 @@ public class RIL extends BaseCommands implements CommandsInterface {
     AtomicBoolean mTestingEmergencyCall = new AtomicBoolean(false);
 
     protected Integer mInstanceId;
+    private List<String> mOldRilFeatures;
 
     private TelephonyMetrics mMetrics = TelephonyMetrics.getInstance();
 
@@ -326,7 +327,7 @@ public class RIL extends BaseCommands implements CommandsInterface {
     static final int RESPONSE_SOLICITED_ACK_EXP = 3;
     static final int RESPONSE_UNSOLICITED_ACK_EXP = 4;
 
-    static final String[] SOCKET_NAME_RIL = {"rild", "rild2", "rild3"};
+    static final String[] SOCKET_NAME_RIL = {"rild", "rild1", "rild2"};
 
     static final int SOCKET_OPEN_RETRY_MILLIS = 4 * 1000;
 
@@ -760,6 +761,9 @@ public class RIL extends BaseCommands implements CommandsInterface {
         mPhoneType = RILConstants.NO_PHONE;
         mInstanceId = instanceId;
 
+        final String oldRilFeatures = SystemProperties.get("ro.telephony.ril.config", "");
+        mOldRilFeatures = Arrays.asList(oldRilFeatures.split(","));
+
         PowerManager pm = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
         mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, RILJ_LOG_TAG);
         mWakeLock.setReferenceCounted(false);
@@ -1099,7 +1103,10 @@ public class RIL extends BaseCommands implements CommandsInterface {
     getIMSIForApp(String aid, Message result) {
         RILRequest rr = RILRequest.obtain(RIL_REQUEST_GET_IMSI, result);
 
-        rr.mParcel.writeInt(1);
+        boolean writeAidOnly = needsOldRilFeature("writeaidonly");
+        if (!writeAidOnly) {
+            rr.mParcel.writeInt(1);
+        }
         rr.mParcel.writeString(aid);
 
         if (RILJ_LOGD) riljLog(rr.serialString() +
@@ -3577,6 +3584,9 @@ public class RIL extends BaseCommands implements CommandsInterface {
 
                 // Initial conditions
                 setRadioPower(false, null);
+                if (needsOldRilFeature("setPrefNwTypeOnUnsolConnected")) {
+                    setPreferredNetworkType(mPreferredNetworkType, null);
+                }
                 setCdmaSubscriptionSource(mCdmaSubscription, null);
                 setCellInfoListRate(Integer.MAX_VALUE, null);
                 notifyRegistrantsRilConnectionChanged(((int[])ret)[0]);
@@ -5424,5 +5434,9 @@ public class RIL extends BaseCommands implements CommandsInterface {
             riljLog(rr.serialString() + "> " + requestToString(rr.mRequest));
         }
         send(rr);
+    }
+
+    public boolean needsOldRilFeature(String feature) {
+        return mOldRilFeatures.contains(feature);
     }
 }
