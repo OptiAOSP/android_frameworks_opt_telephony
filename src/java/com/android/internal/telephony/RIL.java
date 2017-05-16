@@ -3205,6 +3205,7 @@ public final class RIL extends BaseCommands implements CommandsInterface {
             case RIL_UNSOL_PCO_DATA: ret = responsePcoData(p); break;
             case RIL_UNSOL_RESPONSE_ADN_RECORDS: ret = responseAdnRecords(p); break;
             case RIL_UNSOL_RESPONSE_ADN_INIT_DONE: ret = responseVoid(p); break;
+            case RIL_UNSOL_STK_SEND_SMS_RESULT: ret = responseInts(p); break; // Samsung STK
 
             default:
                 throw new RuntimeException("Unrecognized unsol response: " + response);
@@ -3661,6 +3662,15 @@ public final class RIL extends BaseCommands implements CommandsInterface {
                 if (mAdnRecordsInfoRegistrants != null) {
                     mAdnRecordsInfoRegistrants.notifyRegistrants(
                                             new AsyncResult(null, ret, null));
+                }
+                break;
+            // Samsung STK
+            case RIL_UNSOL_STK_SEND_SMS_RESULT:
+                if (RILJ_LOGD) unsljLogRet(response, ret);
+
+                if (mCatSendSmsResultRegistrant != null) {
+                    mCatSendSmsResultRegistrant.notifyRegistrant(
+                            new AsyncResult (null, ret, null));
                 }
                 break;
         }
@@ -4716,6 +4726,7 @@ public final class RIL extends BaseCommands implements CommandsInterface {
             case RIL_UNSOL_PCO_DATA: return "UNSOL_PCO_DATA";
             case RIL_UNSOL_RESPONSE_ADN_INIT_DONE: return "RIL_UNSOL_RESPONSE_ADN_INIT_DONE";
             case RIL_UNSOL_RESPONSE_ADN_RECORDS: return "RIL_UNSOL_RESPONSE_ADN_RECORDS";
+            case RIL_UNSOL_STK_SEND_SMS_RESULT: return "RIL_UNSOL_STK_SEND_SMS_RESULT";
             default: return "<unknown response>";
         }
     }
