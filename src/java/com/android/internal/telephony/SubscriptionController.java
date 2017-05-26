@@ -41,7 +41,6 @@ import android.text.TextUtils;
 import android.text.format.Time;
 import android.util.Log;
 import java.util.Objects;
-import com.android.internal.telephony.RIL;
 import com.android.internal.telephony.IccCardConstants.State;
 
 import java.io.FileDescriptor;
@@ -124,7 +123,6 @@ public class SubscriptionController extends ISub.Stub {
     /** The singleton instance. */
     protected static SubscriptionController sInstance = null;
     protected static Phone[] sPhones;
-    private static CommandsInterface[] sCommandsInterfaces;
     protected Context mContext;
     protected TelephonyManager mTelephonyManager;
     protected CallManager mCM;
@@ -154,7 +152,6 @@ public class SubscriptionController extends ISub.Stub {
         synchronized (SubscriptionController.class) {
             if (sInstance == null) {
                 sInstance = new SubscriptionController(c);
-                sCommandsInterfaces = ci;
             } else {
                 Log.wtf(LOG_TAG, "init() called multiple times!  sInstance = " + sInstance);
             }
@@ -1490,7 +1487,7 @@ public class SubscriptionController extends ISub.Stub {
             }
             if (atLeastOneMatch) {
                 proxyController.setRadioCapability(rafs);
-                if (needsSim2gsmOnly()) {
+                if (!SystemProperties.getBoolean("ro.ril.multi_rat_capable", true)) {
                      updateDataSubNetworkType(slotId, subId);
                 }
             } else {
@@ -1511,13 +1508,6 @@ public class SubscriptionController extends ISub.Stub {
         if (subscriptionInfoUpdater != null) {
             subscriptionInfoUpdater.setDefaultDataSubNetworkType(slotId, subId);
         }
-    }
-
-    private boolean needsSim2gsmOnly() {
-        if (sCommandsInterfaces[0] instanceof RIL) {
-            return ((RIL) sCommandsInterfaces[0]).needsOldRilFeature("sim2gsmonly");
-        }
-        return false;
     }
 
     private void updateAllDataConnectionTrackers() {
