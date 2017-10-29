@@ -19,7 +19,6 @@ package com.android.internal.telephony;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isNull;
@@ -41,7 +40,6 @@ import android.test.suitebuilder.annotation.SmallTest;
 import android.util.Singleton;
 
 import static com.android.internal.telephony.TelephonyTestUtils.waitForMs;
-import android.telephony.TelephonyManager;
 
 import org.junit.After;
 import org.junit.Before;
@@ -195,20 +193,5 @@ public class ImsSMSDispatcherTest extends TelephonyTest {
         mSimulatedCommands.notifyImsNetworkStateChanged();
         /* wait for async msg get handled */
         waitForMs(200);
-    }
-
-    @Test @SmallTest
-    public void testShouldSendSmsOverIms() throws Exception {
-        mContextFixture.putBooleanResource(com.android.internal.R.bool.
-                config_send_sms1x_on_voice_call, true);
-        doReturn(mServiceState).when(mPhone).getServiceState();
-        doReturn(TelephonyManager.NETWORK_TYPE_EHRPD).when(mServiceState).
-                getDataNetworkType();
-        doReturn(TelephonyManager.NETWORK_TYPE_1xRTT).when(mServiceState).
-                getVoiceNetworkType();
-        doReturn(PhoneConstants.State.IDLE).when(mPhone).getState();
-        assertTrue(mImsSmsDispatcher.shouldSendSmsOverIms());
-        doReturn(PhoneConstants.State.RINGING).when(mPhone).getState();
-        assertFalse(mImsSmsDispatcher.shouldSendSmsOverIms());
     }
 }

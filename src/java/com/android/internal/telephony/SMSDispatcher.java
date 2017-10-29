@@ -160,7 +160,7 @@ public abstract class SMSDispatcher extends Handler {
     /** Outgoing message counter. Shared by all dispatchers. */
     private SmsUsageMonitor mUsageMonitor;
 
-    protected ImsSMSDispatcher mImsSMSDispatcher;
+    private ImsSMSDispatcher mImsSMSDispatcher;
 
     /** Number of outgoing SmsTrackers waiting for user confirmation. */
     private int mPendingTrackerCount;
