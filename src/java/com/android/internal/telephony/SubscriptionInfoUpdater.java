@@ -17,7 +17,7 @@
 package com.android.internal.telephony;
 
 import android.app.ActivityManagerNative;
-import android.app.IUserSwitchObserver;
+import android.app.UserSwitchObserver;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -146,8 +146,7 @@ public class SubscriptionInfoUpdater extends Handler {
         // -Whenever we switch to a new user
         mCurrentlyActiveUserId = 0;
         try {
-            ActivityManagerNative.getDefault().registerUserSwitchObserver(
-                    new IUserSwitchObserver.Stub() {
+            ActivityManagerNative.getDefault().registerUserSwitchObserver(new UserSwitchObserver() {
                 @Override
                 public void onUserSwitching(int newUserId, IRemoteCallback reply)
                         throws RemoteException {
@@ -164,15 +163,6 @@ public class SubscriptionInfoUpdater extends Handler {
                     }
                 }
 
-                @Override
-                public void onUserSwitchComplete(int newUserId) {
-                    // Ignore.
-                }
-
-                @Override
-                public void onForegroundProfileSwitch(int newProfileId) throws RemoteException {
-                    // Ignore.
-                }
             }, LOG_TAG);
             mCurrentlyActiveUserId = ActivityManagerNative.getDefault().getCurrentUser().id;
         } catch (RemoteException e) {

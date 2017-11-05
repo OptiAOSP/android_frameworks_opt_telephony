@@ -4182,10 +4182,10 @@ public class ServiceStateTracker extends Handler {
 
         Context context = mPhone.getContext();
 
-
         CharSequence details = "";
-        CharSequence title = context.getText(com.android.internal.R.string.RestrictedOnData);
+        CharSequence title = "";
         int notificationId = CS_NOTIFICATION;
+        int icon = com.android.internal.R.drawable.stat_sys_warning;
 
         switch (notifyType) {
             case PS_ENABLED:
@@ -4194,36 +4194,43 @@ public class ServiceStateTracker extends Handler {
                     return;
                 }
                 notificationId = PS_NOTIFICATION;
-                details = context.getText(com.android.internal.R.string.RestrictedOnData);
+                title = context.getText(com.android.internal.R.string.RestrictedOnDataTitle);
+                details = context.getText(com.android.internal.R.string.RestrictedStateContent);
                 break;
             case PS_DISABLED:
                 notificationId = PS_NOTIFICATION;
                 break;
             case CS_ENABLED:
-                details = context.getText(com.android.internal.R.string.RestrictedOnAllVoice);
+                title = context.getText(com.android.internal.R.string.RestrictedOnAllVoiceTitle);
+                details = context.getText(
+                        com.android.internal.R.string.RestrictedStateContent);
                 break;
             case CS_NORMAL_ENABLED:
-                details = context.getText(com.android.internal.R.string.RestrictedOnNormal);
+                title = context.getText(com.android.internal.R.string.RestrictedOnNormalTitle);
+                details = context.getText(com.android.internal.R.string.RestrictedStateContent);
                 break;
             case CS_EMERGENCY_ENABLED:
-                details = context.getText(com.android.internal.R.string.RestrictedOnEmergency);
+                title = context.getText(com.android.internal.R.string.RestrictedOnEmergencyTitle);
+                details = context.getText(
+                        com.android.internal.R.string.RestrictedStateContent);
                 break;
             case CS_DISABLED:
                 // do nothing and cancel the notification later
                 break;
         }
 
-        if (DBG) log("setNotification: put notification " + title + " / " +details);
-        mNotification = new Notification.Builder(context)
-                .setWhen(System.currentTimeMillis())
-                .setAutoCancel(true)
-                .setSmallIcon(com.android.internal.R.drawable.stat_sys_warning)
-                .setTicker(title)
-                .setColor(context.getResources().getColor(
-                        com.android.internal.R.color.system_notification_accent_color))
-                .setContentTitle(title)
-                .setContentText(details)
-                .build();
+         if (DBG) log("setNotification: put notification " + title + " / " +details);
+
+         mNotification = new Notification.Builder(context)
+                 .setWhen(System.currentTimeMillis())
+                 .setAutoCancel(true)
+                 .setSmallIcon(com.android.internal.R.drawable.stat_sys_warning)
+                 .setTicker(title)
+                 .setColor(context.getResources().getColor(
+                         com.android.internal.R.color.system_notification_accent_color))
+                 .setContentTitle(title)
+                 .setContentText(details)
+                 .build();
 
         NotificationManager notificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
