@@ -805,6 +805,10 @@ public abstract class BaseCommands implements CommandsInterface {
             }
 
             if (mState.isOn() && !oldState.isOn()) {
+                if (mIccStatusChangedRegistrants != null) {
+                    mIccStatusChangedRegistrants.notifyRegistrants();
+                }
+
                 mOnRegistrants.notifyRegistrants();
             }
 

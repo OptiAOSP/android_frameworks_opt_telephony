@@ -3242,8 +3242,29 @@ public class RIL extends BaseCommands implements CommandsInterface {
         switch(response) {
             case RIL_UNSOL_RESPONSE_RADIO_STATE_CHANGED:
                 /* has bonus radio state int */
-                RadioState newState = getRadioStateFromInt(p.readInt());
-                if (RILJ_LOGD) unsljLogMore(response, newState.toString());
+                int state = p.readInt();
+                Rlog.d(RILJ_LOG_TAG, "Radio state: " + state);
+
+                switch (state) {
+                    case 2:
+                        // RADIO_UNAVAILABLE
+                        state = 1;
+                        break;
+                    case 3:
+                        // RADIO_ON
+                        state = 10;
+                        break;
+                    case 4:
+                        // RADIO_ON
+                        state = 10;
+                        // When SIM is PIN-unlocked, RIL doesn't respond with RIL_UNSOL_RESPONSE_SIM_STATUS_CHANGED.
+                        // We notify the system in switchToRadioState(newState).
+                        Rlog.d(RILJ_LOG_TAG, "SIM is PIN-unlocked now");
+                        break;
+                }
+
+                RadioState newState = getRadioStateFromInt(state);
+                Rlog.d(RILJ_LOG_TAG, "New Radio state: " + state + " (" + newState.toString() + ")");
 
                 switchToRadioState(newState);
             break;
